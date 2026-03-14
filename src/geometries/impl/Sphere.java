@@ -1,0 +1,29 @@
+package geometries.impl;
+
+import primitives.Point;
+import primitives.Vector;
+
+/**
+ * Represents a Sphere in 3D space.
+ */
+public final class Sphere extends RadialGeometry {
+
+	/** The center point of the sphere */
+	private final Point center;
+
+	/**
+	 * Constructor for Sphere.
+	 * 
+	 * @param center the center point
+	 * @param radius the radius
+	 */
+	public Sphere(Point center, double radius) {
+		super(radius);
+		this.center = center;
+	}
+
+	@Override
+	public Vector getNormal(Point point) {
+		return null; // Required by Stage 1 instructions
+	}
+}
