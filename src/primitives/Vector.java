@@ -23,7 +23,7 @@ public final class Vector extends Point {
 	 */
 	public Vector(double x, double y, double z) {
 		super(x, y, z);
-		if (this.xyz.equals(Double3.ZERO)) {
+		if (this._xyz.equals(Double3.ZERO)) {
 			throw new IllegalArgumentException("Vector zero is forbidden");
 		}
 	}
@@ -36,7 +36,7 @@ public final class Vector extends Point {
 	 */
 	public Vector(Double3 xyz) {
 		super(xyz);
-		if (this.xyz.equals(Double3.ZERO)) {
+		if (this._xyz.equals(Double3.ZERO)) {
 			throw new IllegalArgumentException("Vector zero is forbidden");
 		}
 	}
@@ -48,7 +48,7 @@ public final class Vector extends Point {
 	 * @return a new vector
 	 */
 	public Vector add(Vector other) {
-		return new Vector(this.xyz.add(other.xyz));
+		return new Vector(this._xyz.add(other._xyz));
 	}
 
 	/**
@@ -58,7 +58,7 @@ public final class Vector extends Point {
 	 * @return a new scaled vector
 	 */
 	public Vector scale(double scalar) {
-		return new Vector(this.xyz.scale(scalar));
+		return new Vector(this._xyz.scale(scalar));
 	}
 
 	/**
@@ -68,7 +68,8 @@ public final class Vector extends Point {
 	 * @return the dot product
 	 */
 	public double dotProduct(Vector other) {
-		return this.xyz._d1() * other.xyz._d1() + this.xyz._d2() * other.xyz._d2() + this.xyz._d3() * other.xyz._d3();
+		return this._xyz._d1() * other._xyz._d1() + this._xyz._d2() * other._xyz._d2()
+				+ this._xyz._d3() * other._xyz._d3();
 	}
 
 	/**
@@ -78,9 +79,9 @@ public final class Vector extends Point {
 	 * @return a new vector resulting from the cross product
 	 */
 	public Vector crossProduct(Vector other) {
-		return new Vector(this.xyz._d2() * other.xyz._d3() - this.xyz._d3() * other.xyz._d2(),
-				this.xyz._d3() * other.xyz._d1() - this.xyz._d1() * other.xyz._d3(),
-				this.xyz._d1() * other.xyz._d2() - this.xyz._d2() * other.xyz._d1());
+		return new Vector(this._xyz._d2() * other._xyz._d3() - this._xyz._d3() * other._xyz._d2(),
+				this._xyz._d3() * other._xyz._d1() - this._xyz._d1() * other._xyz._d3(),
+				this._xyz._d1() * other._xyz._d2() - this._xyz._d2() * other._xyz._d1());
 	}
 
 	/**

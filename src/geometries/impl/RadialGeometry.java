@@ -8,10 +8,10 @@ import geometries.api.Geometry;
 public abstract class RadialGeometry extends Geometry {
 
 	/** The radius of the geometry */
-	protected final double radius;
+	protected final double _radius;
 
 	/** The squared radius for optimization purposes */
-	protected final double radiusSquared;
+	protected final double _radiusSquared;
 
 	/**
 	 * Constructor for RadialGeometry.
@@ -19,7 +19,7 @@ public abstract class RadialGeometry extends Geometry {
 	 * @param radius the radius
 	 */
 	public RadialGeometry(double radius) {
-		this.radius = radius;
-		this.radiusSquared = radius * radius;
+		this._radius = radius;
+		this._radiusSquared = radius * radius;
 	}
 }

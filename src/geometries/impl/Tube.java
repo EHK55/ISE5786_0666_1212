@@ -10,7 +10,7 @@ import primitives.Vector;
 public class Tube extends RadialGeometry {
 
 	/** The central axis ray of the tube */
-	protected final Ray axis;
+	protected final Ray _axis;
 
 	/**
 	 * Constructor for Tube.
@@ -20,7 +20,7 @@ public class Tube extends RadialGeometry {
 	 */
 	public Tube(double radius, Ray axis) {
 		super(radius);
-		this.axis = axis;
+		this._axis = axis;
 	}
 
 	@Override

@@ -7,7 +7,7 @@ package primitives;
 public class Point {
 
 	/** The coordinates of the point */
-	protected final Double3 xyz;
+	protected final Double3 _xyz;
 
 	/** The origin point (0,0,0) */
 	public static final Point ZERO = new Point(0, 0, 0);
@@ -20,7 +20,7 @@ public class Point {
 	 * @param z the Z coordinate
 	 */
 	public Point(double x, double y, double z) {
-		this.xyz = new Double3(x, y, z);
+		this._xyz = new Double3(x, y, z);
 	}
 
 	/**
@@ -29,7 +29,7 @@ public class Point {
 	 * @param xyz the coordinates as Double3
 	 */
 	public Point(Double3 xyz) {
-		this.xyz = xyz;
+		this._xyz = xyz;
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class Point {
 	 * @return a new Vector from the other point to this point
 	 */
 	public Vector subtract(Point other) {
-		return new Vector(this.xyz.subtract(other.xyz));
+		return new Vector(this._xyz.subtract(other._xyz));
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class Point {
 	 * @return a new Point shifted by the vector
 	 */
 	public Point add(Vector vector) {
-		return new Point(this.xyz.add(vector.xyz));
+		return new Point(this._xyz.add(vector._xyz));
 	}
 
 	/**
@@ -59,9 +59,9 @@ public class Point {
 	 * @return the squared distance
 	 */
 	public double distanceSquared(Point other) {
-		double dx = this.xyz._d1() - other.xyz._d1();
-		double dy = this.xyz._d2() - other.xyz._d2();
-		double dz = this.xyz._d3() - other.xyz._d3();
+		double dx = this._xyz._d1() - other._xyz._d1();
+		double dy = this._xyz._d2() - other._xyz._d2();
+		double dz = this._xyz._d3() - other._xyz._d3();
 		return dx * dx + dy * dy + dz * dz;
 	}
 
@@ -82,11 +82,11 @@ public class Point {
 			return true;
 		if (obj == null || getClass() != obj.getClass())
 			return false;
-		return xyz.equals(((Point) obj).xyz);
+		return _xyz.equals(((Point) obj)._xyz);
 	}
 
 	@Override
 	public String toString() {
-		return "Point: " + xyz;
+		return "Point: " + _xyz;
 	}
 }

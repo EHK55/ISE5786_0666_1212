@@ -10,7 +10,7 @@ import primitives.Vector;
 public final class Cylinder extends Tube {
 
 	/** The height of the cylinder */
-	private final double height;
+	private final double _height;
 
 	/**
 	 * Constructor for Cylinder.
@@ -21,11 +21,11 @@ public final class Cylinder extends Tube {
 	 */
 	public Cylinder(double radius, Ray axis, double height) {
 		super(radius, axis);
-		this.height = height;
+		this._height = height;
 	}
 
 	@Override
 	public Vector getNormal(Point point) {
-		return null; // Required by Stage 1 instructions
+		return null;
 	}
 }

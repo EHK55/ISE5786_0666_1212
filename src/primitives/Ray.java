@@ -7,10 +7,10 @@ package primitives;
 public class Ray {
 
 	/** The origin point of the ray */
-	private final Point origin;
+	private final Point _origin;
 
 	/** The normalized direction vector of the ray */
-	private final Vector direction;
+	private final Vector _direction;
 
 	/**
 	 * Constructor for Ray. Automatically normalizes the direction vector before
@@ -20,8 +20,8 @@ public class Ray {
 	 * @param direction the direction vector
 	 */
 	public Ray(Point origin, Vector direction) {
-		this.origin = origin;
-		this.direction = direction.normalize();
+		this._origin = origin;
+		this._direction = direction.normalize();
 	}
 
 	/**
@@ -30,7 +30,7 @@ public class Ray {
 	 * @return the origin
 	 */
 	public Point origin() {
-		return origin;
+		return _origin;
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class Ray {
 	 * @return the direction
 	 */
 	public Vector direction() {
-		return direction;
+		return _direction;
 	}
 
 	@Override
@@ -49,11 +49,11 @@ public class Ray {
 		if (obj == null || getClass() != obj.getClass())
 			return false;
 		Ray other = (Ray) obj;
-		return origin.equals(other.origin) && direction.equals(other.direction);
+		return _origin.equals(other._origin) && _direction.equals(other._direction);
 	}
 
 	@Override
 	public String toString() {
-		return "Ray [origin=" + origin + ", direction=" + direction + "]";
+		return "Ray [origin=" + _origin + ", direction=" + _direction + "]";
 	}
 }
