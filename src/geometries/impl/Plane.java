@@ -13,12 +13,15 @@ public final class Plane extends Geometry {
 	private final Vector _normal;
 
 	/**
-	 * Constructor using 3 points on the plane. Initializes the normal to null for
-	 * Stage 1.
+	 * Constructor using 3 points on the plane.
 	 */
 	public Plane(Point p1, Point p2, Point p3) {
 		this._point = p1;
-		this._normal = null; // Modification exigée par le nouveau PDF
+		
+		Vector u = p2.subtract(p1);
+		Vector v = p3.subtract(p1);
+		
+		this._normal = u.crossProduct(v).normalize();
 	}
 
 	/**
