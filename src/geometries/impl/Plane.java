@@ -58,7 +58,7 @@ public final class Plane extends Geometry {
 	    }
 
 	    try {
-	        // Use the point on the plane (change _p0 to your field name)
+	        // Use the point on the plane 
 	        Vector p0Q = _point.subtract(p0); 
 	        
 	        double t = primitives.Util.alignZero(n.dotProduct(p0Q) / nv);
