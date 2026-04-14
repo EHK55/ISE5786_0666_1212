@@ -28,4 +28,28 @@ class RayTests {
 		// Note: adjust "getDirection()" if your method is simply named "direction()"
 		assertEquals(1d, ray.direction().length(), DELTA, "ERROR: Ray direction is not normalized");
 	}
+	
+	/**
+     * Test method for {@link primitives.Ray#getPoint(double)}.
+     */
+    @Test
+    void testGetPoint() {
+        Ray ray = new Ray(new Point(1, 0, 0), new Vector(1, 0, 0));
+
+        // ============ Equivalence Partitions Tests ==============
+        
+        // EP01: Positive distance (t > 0)
+        assertEquals(new Point(2, 0, 0), ray.getPoint(1), 
+            "getPoint() failed for positive distance");
+        
+        // EP02: Negative distance (t < 0)
+        assertEquals(new Point(0, 0, 0), ray.getPoint(-1), 
+            "getPoint() failed for negative distance");
+
+        // =============== Boundary Values Tests ==================
+        
+        // BV01: Zero distance (t = 0)
+        assertEquals(new Point(1, 0, 0), ray.getPoint(0), 
+            "getPoint() failed for zero distance");
+    }
 }

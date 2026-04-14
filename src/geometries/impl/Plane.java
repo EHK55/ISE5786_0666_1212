@@ -1,7 +1,10 @@
 package geometries.impl;
 
+import java.util.List;
+
 import geometries.api.Geometry;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 /**
@@ -40,4 +43,32 @@ public final class Plane extends Geometry {
 	public Vector getNormal(Point point) {
 		return _normal;
 	}
+	
+	@Override
+	public List<Point> findIntersections(Ray ray) {
+	    Point p0 = ray.origin();
+	    Vector v = ray.direction();
+	    Vector n = _normal;
+
+	    double nv = n.dotProduct(v);
+
+	    // Ray is parallel to the plane
+	    if (primitives.Util.isZero(nv)) {
+	        return null;
+	    }
+
+	    try {
+	        // Use the point on the plane (change _p0 to your field name)
+	        Vector p0Q = _point.subtract(p0); 
+	        
+	        double t = primitives.Util.alignZero(n.dotProduct(p0Q) / nv);
+
+	        // Return intersection only if it's in the ray's direction (t > 0)
+	        return t > 0 ? List.of(ray.getPoint(t)) : null;
+	    } catch (IllegalArgumentException ignore) {
+	        // Ray starts on the plane
+	        return null;
+	    }
+	}
+	
 }

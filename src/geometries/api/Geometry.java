@@ -7,7 +7,7 @@ import primitives.Vector;
  * Abstract base class for all geometric shapes. It serves as a base for all
  * geometries in the 3D space.
  */
-public abstract class Geometry {
+public abstract class Geometry extends Intersectable {
 
 	/**
 	 * Gets the normal vector to the geometry at a specific point.

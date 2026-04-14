@@ -1,6 +1,9 @@
 package geometries.impl;
 
+import java.util.List;
+
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 /**
@@ -26,5 +29,40 @@ public final class Sphere extends RadialGeometry {
 	public Vector getNormal(Point point) {
 		// Normal of a sphere is the vector from the center to the point, normalized
 		return point.subtract(this._center).normalize(); 
+	}
+	
+	@Override
+	public List<Point> findIntersections(Ray ray) {
+
+		Point p0 = ray.origin();
+	    Vector v = ray.direction();
+	    Vector u;
+	    
+	    try {
+	        u = _center.subtract(p0);
+	    } catch (IllegalArgumentException ignore) {
+	        return List.of(ray.getPoint(_radius)); // Ray starts at center
+	    }
+
+	    double tm = v.dotProduct(u);
+	    double dSquared = u.lengthSquared() - tm * tm;
+	    double thSquared = _radius * _radius - dSquared;
+
+	    // No intersections
+	    if (primitives.Util.alignZero(thSquared) <= 0) return null;
+
+	    double th = Math.sqrt(thSquared);
+	    double t1 = primitives.Util.alignZero(tm - th);
+	    double t2 = primitives.Util.alignZero(tm + th);
+
+	    // Only return points in the direction of the ray (t > 0)
+	    if (t1 > 0 && t2 > 0) {
+	        return List.of(ray.getPoint(t1), ray.getPoint(t2));
+	    }
+	    if (t1 > 0) return List.of(ray.getPoint(t1));
+	    if (t2 > 0) return List.of(ray.getPoint(t2));
+
+	    return null;
+
 	}
 }

@@ -2,6 +2,7 @@ package geometries.impl;
 
 import static primitives.Util.isZero;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import geometries.api.Geometry;
@@ -79,5 +80,39 @@ public class Polygon extends Geometry {
 	@Override
 	public Vector getNormal(Point point) {
 		return _plane.getNormal(point);
+	}
+	
+	@Override
+	public List<Point> findIntersections(Ray ray) {
+	    // Step 1: Find intersection with the plane of the polygon
+	    List<Point> planeIntersections = _plane.findIntersections(ray);
+	    if (planeIntersections == null) return null;
+
+	    Point p0 = ray.origin();
+	    Vector v = ray.direction();
+
+	    // Step 2: Check if the intersection point is inside the polygon
+	    int size = _vertices.size();
+	    List<Vector> vectors = new ArrayList<>(size);
+	    for (Point vertex : _vertices) {
+	        vectors.add(vertex.subtract(p0));
+	    }
+
+	    List<Vector> normals = new ArrayList<>(size);
+	    for (int i = 0; i < size; i++) {
+	        Vector v1 = vectors.get(i);
+	        Vector v2 = vectors.get((i + 1) % size);
+	        normals.add(v1.crossProduct(v2).normalize());
+	    }
+
+	    double firstSign = primitives.Util.alignZero(v.dotProduct(normals.get(0)));
+	    if (firstSign == 0) return null;
+
+	    for (int i = 1; i < size; i++) {
+	        double sign = primitives.Util.alignZero(v.dotProduct(normals.get(i)));
+	        if (sign * firstSign <= 0) return null;
+	    }
+
+	    return planeIntersections;
 	}
 }
