@@ -12,17 +12,23 @@ import java.util.List;
 
 /**
  * Integration tests for Camera ray construction and Ray-Geometry intersections.
+ * This class tests the combination of camera ray generation and intersection logic.
  */
 public class CameraIntersectionIntegration {
+
+    /**
+     * Default constructor for CameraIntersectionIntegration.
+     */
+    public CameraIntersectionIntegration() {}
 
     /**
      * Helper method to count intersections for all rays from a camera through a 3x3 view plane.
      * @param cam      The camera to construct rays from
      * @param geo      The geometry to intersect with
      * @param expected The expected total number of intersections
-     * @param name     The name of the test case
+     * @param name     The name of the test case for identification
      */
-    private void assertIntersectionsCount(Camera cam, Intersectable geo, int expected, String name) {
+    private static void assertIntersectionsCount(Camera cam, Intersectable geo, int expected, String name) {
         int count = 0;
         int nX = 3;
         int nY = 3;
@@ -39,7 +45,7 @@ public class CameraIntersectionIntegration {
     }
 
     /**
-     * Integration tests for Camera and Sphere.
+     * Integration tests for Camera rays and Sphere intersections.
      */
     @Test
     public void testCameraRaySphereIntegration() {
@@ -54,21 +60,21 @@ public class CameraIntersectionIntegration {
         // TC01: Sphere r=1 (2 points)
         assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -3), 1), 2, "Sphere r=1");
 
-        // TC02: Sphere r=2.5 (18 points) - Move sphere slightly back to ensure camera is outside
+        // TC02: Sphere r=2.5 (18 points)
         assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -3), 2.5), 18, "Sphere r=2.5");
 
-        // TC03: Sphere r=2 (10 points) - Center and side rays intersect twice
+        // TC03: Sphere r=2 (10 points)
         assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -2.5), 2), 10, "Sphere r=2");
 
-        // TC04: Sphere r=4 (9 points) - Camera is inside the sphere
+        // TC04: Sphere r=4 (9 points)
         assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -1), 4), 9, "Sphere r=4");
 
-        // TC05: Sphere r=0.5 (0 points) - Sphere is behind the camera
+        // TC05: Sphere r=0.5 (0 points)
         assertIntersectionsCount(cam, new Sphere(new Point(0, 0, 1), 0.5), 0, "Sphere r=0.5");
     }
 
     /**
-     * Integration tests for Camera and Plane.
+     * Integration tests for Camera rays and Plane intersections.
      */
     @Test
     public void testCameraRayPlaneIntegration() {
@@ -91,7 +97,7 @@ public class CameraIntersectionIntegration {
     }
 
     /**
-     * Integration tests for Camera and Triangle.
+     * Integration tests for Camera rays and Triangle intersections.
      */
     @Test
     public void testCameraRayTriangleIntegration() {
