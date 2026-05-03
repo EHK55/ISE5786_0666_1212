@@ -1,118 +1,116 @@
 package renderer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
-import geometries.*;
+
 import geometries.api.Intersectable;
 import geometries.impl.Plane;
 import geometries.impl.Sphere;
 import geometries.impl.Triangle;
-import primitives.*;
-import java.util.List;
+import primitives.Point;
+import primitives.Vector;
 
 /**
  * Integration tests for Camera ray construction and Ray-Geometry intersections.
- * This class tests the combination of camera ray generation and intersection logic.
+ * This class tests the combination of camera ray generation and intersection
+ * logic.
  */
 public class CameraIntersectionIntegration {
 
-    /**
-     * Default constructor for CameraIntersectionIntegration.
-     */
-    public CameraIntersectionIntegration() {}
+	/** Resolution for X axis in integration tests */
+	private static final int NX = 3;
+	/** Resolution for Y axis in integration tests */
+	private static final int NY = 3;
 
-    /**
-     * Helper method to count intersections for all rays from a camera through a 3x3 view plane.
-     * @param cam      The camera to construct rays from
-     * @param geo      The geometry to intersect with
-     * @param expected The expected total number of intersections
-     * @param name     The name of the test case for identification
-     */
-    private static void assertIntersectionsCount(Camera cam, Intersectable geo, int expected, String name) {
-        int count = 0;
-        int nX = 3;
-        int nY = 3;
+	/**
+	 * Default constructor for CameraIntersectionIntegration.
+	 */
+	public CameraIntersectionIntegration() {
+	}
 
-        for (int i = 0; i < nY; i++) {
-            for (int j = 0; j < nX; j++) {
-                List<Point> intersections = geo.findIntersections(cam.constructRay(j, i));
-                if (intersections != null) {
-                    count += intersections.size();
-                }
-            }
-        }
-        assertEquals(expected, count, "Test '" + name + "' failed: Wrong amount of intersections");
-    }
+	/**
+	 * Helper method to count intersections for all rays from a camera through a 3x3
+	 * view plane.
+	 * 
+	 * @param cam      The camera to construct rays from
+	 * @param geo      The geometry to intersect with
+	 * @param expected The expected total number of intersections
+	 * @param name     The name of the test case for identification
+	 */
+	private static void assertIntersectionsCount(Camera cam, Intersectable geo, int expected, String name) {
+		int count = 0;
 
-    /**
-     * Integration tests for Camera rays and Sphere intersections.
-     */
-    @Test
-    public void testCameraRaySphereIntegration() {
-        Camera cam = Camera.getBuilder()
-                .setLocation(Point.ZERO)
-                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
-                .setVpDistance(1)
-                .setVpSize(3, 3)
-                .setResolution(3, 3)
-                .build();
+		for (int i = 0; i < NY; i++) {
+			for (int j = 0; j < NX; j++) {
+				List<Point> intersections = geo.findIntersections(cam.constructRay(j, i));
+				if (intersections != null) {
+					count += intersections.size();
+				}
+			}
+		}
+		assertEquals(expected, count, "Test '" + name + "' failed: Wrong amount of intersections");
+	}
 
-        // TC01: Sphere r=1 (2 points)
-        assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -3), 1), 2, "Sphere r=1");
+	/**
+	 * Integration tests for Camera rays and Sphere intersections.
+	 */
+	@Test
+	public void testCameraRaySphereIntegration() {
+		Camera cam = Camera.getBuilder().setLocation(Point.ZERO).setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+				.setVpDistance(1).setVpSize(3, 3).setResolution(3, 3).build();
 
-        // TC02: Sphere r=2.5 (18 points)
-        assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -3), 2.5), 18, "Sphere r=2.5");
+		// TC01: Sphere r=1 (2 points)
+		assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -3), 1), 2, "Sphere r=1");
 
-        // TC03: Sphere r=2 (10 points)
-        assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -2.5), 2), 10, "Sphere r=2");
+		// TC02: Sphere r=2.5 (18 points)
+		assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -3), 2.5), 18, "Sphere r=2.5");
 
-        // TC04: Sphere r=4 (9 points)
-        assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -1), 4), 9, "Sphere r=4");
+		// TC03: Sphere r=2 (10 points)
+		assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -2.5), 2), 10, "Sphere r=2");
 
-        // TC05: Sphere r=0.5 (0 points)
-        assertIntersectionsCount(cam, new Sphere(new Point(0, 0, 1), 0.5), 0, "Sphere r=0.5");
-    }
+		// TC04: Sphere r=4 (9 points)
+		assertIntersectionsCount(cam, new Sphere(new Point(0, 0, -1), 4), 9, "Sphere r=4");
 
-    /**
-     * Integration tests for Camera rays and Plane intersections.
-     */
-    @Test
-    public void testCameraRayPlaneIntegration() {
-        Camera cam = Camera.getBuilder()
-                .setLocation(Point.ZERO)
-                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
-                .setVpDistance(1)
-                .setVpSize(3, 3)
-                .setResolution(3, 3)
-                .build();
+		// TC05: Sphere r=0.5 (0 points)
+		assertIntersectionsCount(cam, new Sphere(new Point(0, 0, 1), 0.5), 0, "Sphere r=0.5");
+	}
 
-        // TC01: Plane parallel to VP (9 points)
-        assertIntersectionsCount(cam, new Plane(new Point(0, 0, -5), new Vector(0, 0, 1)), 9, "Parallel plane");
+	/**
+	 * Integration tests for Camera rays and Plane intersections.
+	 */
+	@Test
+	public void testCameraRayPlaneIntegration() {
+		Camera cam = Camera.getBuilder().setLocation(Point.ZERO).setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+				.setVpDistance(1).setVpSize(3, 3).setResolution(3, 3).build();
 
-        // TC02: Slanted plane (9 points)
-        assertIntersectionsCount(cam, new Plane(new Point(0, 0, -5), new Vector(0, 1, 2)), 9, "Slanted plane");
+		// TC01: Plane parallel to VP (9 points)
+		assertIntersectionsCount(cam, new Plane(new Point(0, 0, -5), new Vector(0, 0, 1)), 9, "Parallel plane");
 
-        // TC03: Plane parallel to side rays (6 points)
-        assertIntersectionsCount(cam, new Plane(new Point(0, 0, -5), new Vector(0, 5, 1)), 6, "Partially parallel plane");
-    }
+		// TC02: Slanted plane (9 points)
+		assertIntersectionsCount(cam, new Plane(new Point(0, 0, -5), new Vector(0, 1, 2)), 9, "Slanted plane");
 
-    /**
-     * Integration tests for Camera rays and Triangle intersections.
-     */
-    @Test
-    public void testCameraRayTriangleIntegration() {
-        Camera cam = Camera.getBuilder()
-                .setLocation(Point.ZERO)
-                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
-                .setVpDistance(1)
-                .setVpSize(3, 3)
-                .setResolution(3, 3)
-                .build();
+		// TC03: Plane parallel to side rays (6 points)
+		assertIntersectionsCount(cam, new Plane(new Point(0, 0, -5), new Vector(0, 5, 1)), 6,
+				"Partially parallel plane");
+	}
 
-        // TC01: Small triangle (1 point)
-        assertIntersectionsCount(cam, new Triangle(new Point(0, 1, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), 1, "Small triangle");
+	/**
+	 * Integration tests for Camera rays and Triangle intersections.
+	 */
+	@Test
+	public void testCameraRayTriangleIntegration() {
+		Camera cam = Camera.getBuilder().setLocation(Point.ZERO).setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+				.setVpDistance(1).setVpSize(3, 3).setResolution(3, 3).build();
 
-        // TC02: Tall triangle (2 points)
-        assertIntersectionsCount(cam, new Triangle(new Point(0, 20, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), 2, "Tall triangle");
-    }
+		// TC01: Small triangle (1 point)
+		assertIntersectionsCount(cam, new Triangle(new Point(0, 1, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), 1,
+				"Small triangle");
+
+		// TC02: Tall triangle (2 points)
+		assertIntersectionsCount(cam, new Triangle(new Point(0, 20, -2), new Point(1, -1, -2), new Point(-1, -1, -2)),
+				2, "Tall triangle");
+	}
 }

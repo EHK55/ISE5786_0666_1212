@@ -1,5 +1,7 @@
 package primitives;
 
+import java.util.List;
+
 /**
  * Represents a ray (half-line) in 3D space. Defined by an origin point and a
  * normalized direction vector.
@@ -56,19 +58,48 @@ public class Ray {
 	public String toString() {
 		return "Ray [origin=" + _origin + ", direction=" + _direction + "]";
 	}
-	
+
 	/**
 	 * Calculates a point on the ray at a distance t from the origin
+	 * 
 	 * @param t distance from the ray origin (can be positive, negative or zero)
 	 * @return the calculated point: P = P0 + t * v
 	 */
 	public Point getPoint(double t) {
-	    try {
-	        // P = P0 + t * v
-	        return _origin.add(_direction.scale(t));
-	    } catch (Exception e) {
-	        // In case t is so small that scaling results in Vector(0,0,0)
-	        return _origin;
-	    }
+		try {
+			// P = P0 + t * v
+			return _origin.add(_direction.scale(t));
+		} catch (Exception e) {
+			// In case t is so small that scaling results in Vector(0,0,0)
+			return _origin;
+		}
+	}
+
+	/**
+	 * Finds the closest point to the ray's head from a list of points.
+	 * 
+	 * @param points a list of points
+	 * @return the closest point, or null if the list is empty/null
+	 */
+
+	public Point findClosestPoint(List<Point> points) {
+		if (points == null || points.isEmpty()) {
+			return null; // Case of an empty or null list
+		}
+
+		Point closestPoint = null;
+		double minDistance = Double.POSITIVE_INFINITY; // Initialization to infinity
+
+		for (Point point : points) {
+			// Using squared distance to optimize performance
+			double distance = point.distanceSquared(this._origin);
+
+			if (distance < minDistance) {
+				minDistance = distance;
+				closestPoint = point;
+			}
+		}
+
+		return closestPoint;
 	}
 }
