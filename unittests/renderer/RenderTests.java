@@ -97,7 +97,7 @@ class RenderTests {
 				.setRayTracer(scene, RayTracerType.SIMPLE) //
 				.build() //
 				.renderImage() //
-				.printGrid(100, new Color(YELLOW)) //
+				.printFrame(new Color(YELLOW)) //
 				.writeToImage("Two colors render test");
 	}
 

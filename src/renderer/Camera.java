@@ -167,11 +167,34 @@ public class Camera implements Cloneable {
 	 * @param color    the color of the grid
 	 * @return the camera instance
 	 */
+	/**
+	 * Prints a grid on the image. * @param interval The grid interval (in pixels)
+	 * 
+	 * @param color The color of the grid lines
+	 * @return The camera object itself for method chaining
+	 */
 	public Camera printGrid(int interval, Color color) {
-		for (int i = 0; i < nX; i++) {
-			for (int j = 0; j < nY; j++) {
-				if (i % interval == 0 || j % interval == 0) {
-					imageWriter.writePixel(i, j, color);
+		// Outer loop: iterate over the rows (y-axis)
+		for (int yIndex = 0; yIndex < nY; yIndex++) {
+			// Inner loop: iterate over the columns (x-axis)
+			for (int xIndex = 0; xIndex < nX; xIndex++) {
+				// If the pixel is on the grid line, paint it with the grid color
+				if (xIndex % interval == 0 || yIndex % interval == 0) {
+					imageWriter.writePixel(xIndex, yIndex, color);
+				}
+			}
+		}
+		return this;
+	}
+
+	public Camera printFrame(Color color) {
+		// Outer loop: iterate over the rows (y-axis)
+		for (int yIndex = 0; yIndex < nY; yIndex++) {
+			// Inner loop: iterate over the columns (x-axis)
+			for (int xIndex = 0; xIndex < nX; xIndex++) {
+				// If the pixel is on the grid line, paint it with the grid color
+				if (xIndex == 0 || yIndex == 0 || yIndex == nY - 1 || xIndex == nX - 1) {
+					imageWriter.writePixel(xIndex, yIndex, color);
 				}
 			}
 		}

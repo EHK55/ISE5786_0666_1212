@@ -13,8 +13,7 @@ class ImageWriterTests {
 		final int nY = 500;
 		final int step = 50;
 
-		// Background and grid colors (yellow and red as in the presentation, but feel
-		// free to change them!)
+		// Background and grid colors
 		final Color bgColor = new Color(java.awt.Color.YELLOW);
 		final Color gridColor = new Color(java.awt.Color.RED);
 
