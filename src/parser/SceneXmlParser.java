@@ -54,7 +54,7 @@ public class SceneXmlParser {
 				Element ambientLightElement = (Element) ambientLightNodes.item(0);
 				String colorStr = ambientLightElement.getAttribute("color");
 				if (!colorStr.isEmpty()) {
-					scene.setAmbientLight(new AmbientLight(parseColor(colorStr)));
+				    scene.setAmbientLight(new AmbientLight(parseColor(colorStr), primitives.Double3.ONE));
 				}
 			}
 

@@ -11,6 +11,7 @@ import parser.SceneXmlParser;
 import primitives.Color;
 import primitives.Point;
 import scene.Scene;
+import primitives.Double3;
 
 /**
  * End-to-end rendering tests.
@@ -69,7 +70,7 @@ class RenderTests {
 	void testBasicRenderTwoColors() {
 		Scene scene = new Scene("Two colors") //
 				.setBackground(new Color(75, 127, 90)) //
-				.setAmbientLight(new AmbientLight(new Color(255, 191, 191)));
+				.setAmbientLight(new AmbientLight(new Color(255, 191, 191), Double3.ONE));
 
 		final double Z = -100D;
 		// Left, Middle, Right X Bottom, Middle, Top

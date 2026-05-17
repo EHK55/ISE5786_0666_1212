@@ -138,7 +138,7 @@ public class Ray {
 	 * @return the closest point, or null if the list is empty/null
 	 */
 	public Point findClosestPoint(List<Point> points) {
-		return points == null ? null
+		return points == null || points.isEmpty() ? null
 				: findClosestIntersection(points.stream().map(point -> new Intersection(null, point)).toList()).point;
 	}
 }

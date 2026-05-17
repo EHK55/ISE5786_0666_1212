@@ -6,46 +6,60 @@ import primitives.Point;
 import primitives.Vector;
 
 /**
- * Abstract base class for all geometric shapes. It serves as a base for all
- * geometries in the 3D space.
+ * Abstract class representing any geometric shape in 3D space.
+ * Serves as a base for all geometries with material and emission properties.
  */
 public abstract class Geometry extends Intersectable {
+    /** Emission color of the geometry */
+    private Color _emission = Color.BLACK;
+    /** Material properties of the geometry's surface */
+    private Material _material = new Material();
 
-	private Color _emission = Color.BLACK;
-	private Material _material = new Material();
+    /**
+     * Default constructor for Geometry.
+     */
+    protected Geometry() {}
 
-	public Geometry setEmission(Color color) {
-		this._emission = color;
-		return this;
-	}
+    /**
+     * Getter for emission color.
+     * @return the emission color
+     */
+    public Color getEmission() {
+        return this._emission;
+    }
 
-	public Color getEmission() {
-		return this._emission;
-	}
+    /**
+     * Setter for emission color (chained).
+     * @param emission the emission color
+     * @return this Geometry instance
+     */
+    public Geometry setEmission(Color emission) {
+        this._emission = emission;
+        return this;
+    }
 
-	/**
-	 * Getter for the material of the geometry * @return the material
-	 */
-	public Material getMaterial() {
-		return this._material;
-	}
+    /**
+     * Getter for material properties.
+     * @return the material properties
+     */
+    public Material getMaterial() {
+        return this._material;
+    }
 
-	/**
-	 * Setter for the material (Builder pattern chaining) * @param material the new
-	 * material to set
-	 * 
-	 * @return the Geometry object itself
-	 */
-	public Geometry setMaterial(Material material) {
-		this._material = material;
-		return this;
-	}
+    /**
+     * Setter for material properties (chained).
+     * @param material the material properties
+     * @return this Geometry instance
+     */
+    public Geometry setMaterial(Material material) {
+        this._material = material;
+        return this;
+    }
 
-	/**
-	 * Gets the normal vector to the geometry at a specific point.
-	 * 
-	 * @param point the point on the geometry surface
-	 * @return the normal Vector perpendicular to the surface at the given point
-	 */
-	public abstract Vector getNormal(Point point);
+    /**
+     * Calculates the normal vector to the surface of the geometry at a given point.
+     * @param p the point on the surface
+     * @return the normalized normal vector
+     */
+    public abstract Vector getNormal(Point p);
 }

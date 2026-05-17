@@ -106,7 +106,7 @@ class RenderStage6Tests {
 	 */
 	@Test
 	void testRenderEmissionColor() {
-		Scene scene = new Scene("Emission color").setAmbientLight(new AmbientLight(new Color(51, 51, 51)));
+		Scene scene = new Scene("Emission color").setAmbientLight(new AmbientLight(new Color(51, 51, 51), Double3.ONE));
 		scene.geometries //
 				.add(_sphere, // no emission
 						_triangleLeftTop.setEmission(new Color(GREEN)), _triangleLeftBottom.setEmission(new Color(RED)),
@@ -127,7 +127,7 @@ class RenderStage6Tests {
 		// 2. Set the ambient light on a separate line (avoids the void return type
 		// error)
 		// Using RGB values (255, 255, 255) for WHITE to avoid java.awt.Color conflicts
-		scene.setAmbientLight(new AmbientLight(new Color(255, 255, 255)));
+		scene.setAmbientLight(new AmbientLight(new Color(255, 255, 255), Double3.ONE));
 
 		// 3. Add geometries with materials
 		scene.geometries.add(_sphere.setMaterial(new Material().setKA(0.4)),

@@ -1,16 +1,26 @@
 package lighting;
 
 import primitives.Color;
+import primitives.Double3;
 
-public class AmbientLight {
-	private final Color _intensity;
-	public static final AmbientLight NONE = new AmbientLight(Color.BLACK);
+/**
+ * Ambient light source representing a constant background illumination.
+ */
+public class AmbientLight extends Light {
 
-	public AmbientLight(Color intensity) {
-		this._intensity = intensity;
-	}
+    /**
+     * Constructor for AmbientLight.
+     * @param ia the original ambient light intensity
+     * @param ka the ambient light attenuation factor
+     */
+    public AmbientLight(Color ia, Double3 ka) {
+        super(ia.scale(ka));
+    }
 
-	public Color getIntensity() {
-		return _intensity;
-	}
+    /**
+     * Default constructor for AmbientLight (sets intensity to black).
+     */
+    public AmbientLight() {
+        super(Color.BLACK);
+    }
 }
