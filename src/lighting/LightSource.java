@@ -5,20 +5,27 @@ import primitives.Point;
 import primitives.Vector;
 
 /**
- * Public interface representing an external light source.
+ * Interface representing any light source in the scene.
  */
 public interface LightSource {
     /**
-     * Calculates the light intensity at a given point in space.
-     * @param p the illuminated point
-     * @return the light intensity at p
+     * Calculates the intensity of the light at a given point.
+     * @param p the point in space
+     * @return the color intensity
      */
-    Color getIntensity(Point p);
+    public Color getIntensity(Point p);
 
     /**
-     * Calculates the direction of light rays from the light source to a given point.
-     * @param p the illuminated point
-     * @return the normalized direction vector to p
+     * Calculates the direction vector from the light source to a given point.
+     * @param p the point in space
+     * @return the normalized direction vector
      */
-    Vector getL(Point p);
+    public Vector getL(Point p);
+
+    /**
+     * Calculates the distance from the light source to a given point.
+     * @param point the point in space
+     * @return the distance between the light source and the point
+     */
+    public double getDistance(Point point);
 }

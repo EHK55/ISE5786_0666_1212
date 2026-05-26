@@ -7,9 +7,12 @@ import lighting.LightSource;
 import java.util.List;
 
 /**
- * Simple ray tracer implementation that computes Phong reflection model with multiple light sources.
+ * Simple ray tracer implementation that computes Phong reflection model with multiple light sources and shadows.
  */
 public class SimpleRayTracer extends RayTracerBase {
+
+    /** Constant for shadow ray head displacement to avoid self-shadowing */
+    private static final double DELTA = 0.1;
 
     /**
      * Constructor for SimpleRayTracer.
@@ -26,8 +29,6 @@ public class SimpleRayTracer extends RayTracerBase {
             return _scene.background;
         }
         Intersection closestIntersection = ray.findClosestIntersection(intersections);
-        
-        // התיקון כאן: שימוש ב-ray.direction() במקום ray.getDir()
         return closestIntersection == null ? _scene.background : calcColor(closestIntersection, ray.direction());
     }
 
@@ -55,10 +56,12 @@ public class SimpleRayTracer extends RayTracerBase {
         Color color = intersection.geometry.getEmission();
         for (LightSource lightSource : _scene.lights) {
             if (preprocessLightSource(intersection, lightSource)) {
-                Color lightIntensity = lightSource.getIntensity(intersection.point);
-                color = color.add(lightIntensity.scale(
-                        calcDiffuse(intersection).add(calcSpecular(intersection))
-                ));
+                if (unshaded(intersection)) {
+                    Color lightIntensity = lightSource.getIntensity(intersection.point);
+                    color = color.add(lightIntensity.scale(
+                            calcDiffuse(intersection).add(calcSpecular(intersection))
+                    ));
+                }
             }
         }
         return color;
@@ -88,5 +91,30 @@ public class SimpleRayTracer extends RayTracerBase {
         }
         double factor = Math.pow(minusVR, intersection.material.nShininess);
         return intersection.material.kS.scale(factor);
+    }
+
+    /**
+     * Checks whether the light source is unshaded by any object from the intersection point.
+     * @param intersection the intersection point being checked
+     * @return true if the light source is unshaded, false otherwise
+     */
+    private boolean unshaded(Intersection intersection) {
+        Vector pointToLight = intersection.l.scale(-1);
+        // Fixed sign mapping to correctly push the ray head outside the geometry towards the light
+        Vector delta = intersection.normal.scale(intersection.ln > 0 ? -DELTA : DELTA);
+        Ray shadowRay = new Ray(intersection.point.add(delta), pointToLight);
+
+        List<Intersection> shadowIntersections = _scene.geometries.calcIntersections(shadowRay);
+        if (shadowIntersections == null) {
+            return true;
+        }
+
+        double lightDistance = intersection.light.getDistance(intersection.point);
+        for (Intersection i : shadowIntersections) {
+            if (i.point.distance(intersection.point) < lightDistance) {
+                return false;
+            }
+        }
+        return true;
     }
 }
