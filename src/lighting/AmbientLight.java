@@ -23,4 +23,12 @@ public class AmbientLight extends Light {
     public AmbientLight() {
         super(Color.BLACK);
     }
+    
+    /**
+     * Constructor for AmbientLight with a default attenuation coefficient of 1.
+     * @param iA the ambient light intensity color
+     */
+    public AmbientLight(Color iA) {
+        super(iA);
+    }
 }

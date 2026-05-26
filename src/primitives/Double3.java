@@ -131,4 +131,24 @@ public record Double3(double _d1, double _d2, double _d3) {
 	public boolean isLowerThan(Double3 other) {
 		return _d1 < other._d1 && _d2 < other._d2 && _d3 < other._d3;
 	}
+	
+	/**
+	 * Checks whether this triad is greater than a given scalar value k.
+	 * Implemented as the strict logical negation of isLowerThan using De Morgan's laws.
+	 * @param k the value to compare against
+	 * @return true if this triad is greater than k
+	 */
+	public boolean isGreaterThan(double k) {
+		return !isLowerThan(k);
+	}
+
+	/**
+	 * Checks whether this triad is greater than another triad.
+	 * Implemented as the strict logical negation of isLowerThan using De Morgan's laws.
+	 * @param other the triad to compare with
+	 * @return true if this triad is greater than other
+	 */
+	public boolean isGreaterThan(Double3 other) {
+		return !isLowerThan(other);
+	}
 }

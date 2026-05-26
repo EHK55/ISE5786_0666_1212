@@ -39,9 +39,9 @@ class ShadowTests {
    /** The sphere in the tests */
    private final Intersectable  _sphere        = new Sphere(new Point(0, 0, -200), 60D)
       .setEmission(new Color(BLUE))
-      .setMaterial(new Material().setKD(0.5).setKs(0.5).setShininess(99));
+      .setMaterial(new Material().setKD(0.5).setKD(0.5).setShininess(99));
    /** The material of the triangles in the tests */
-   private final Material       _trMaterial    = new Material().setKD(0.5).setKs(0.5).setShininess(30);
+   private final Material       _trMaterial    = new Material().setKD(0.5).setKS(0.5).setShininess(30);
 
    /**
     * Helper function for the tests in this module
@@ -135,7 +135,7 @@ class ShadowTests {
     * Prepare the 3D model for the Sphere over a couple of Triangles test
     */
    private void setTrianglesSphereScene() {
-      Material triangleMaterial = new Material().setKD(0.2).setKs(0.4).setShininess(111);
+      Material triangleMaterial = new Material().setKD(0.2).setKS(0.4).setShininess(111);
       _scene.geometries //
          .add( //
               new Triangle(new Point(-150, -150, -115), new Point(150, -150, -135), new Point(75, 75, -150)) //
@@ -144,7 +144,7 @@ class ShadowTests {
                  .setMaterial(triangleMaterial), //
               new Sphere(new Point(0, 0, -11), 30D) //
                  .setEmission(new Color(BLUE)) //
-                 .setMaterial(new Material().setKD(0.5).setKs(0.4).setShininess(111)) //
+                 .setMaterial(new Material().setKD(0.5).setKS(0.4).setShininess(111)) //
          );
       _scene.setAmbientLight(new AmbientLight(new Color(38, 38, 38), primitives.Double3.ONE));
    }

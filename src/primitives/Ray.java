@@ -1,12 +1,10 @@
 package primitives;
 
 import java.util.List;
-
 import geometries.api.Intersectable.Intersection;
 
 /**
- * Represents a ray (half-line) in 3D space. Defined by an origin point and a
- * normalized direction vector.
+ * Represents a ray (half-line) in 3D space. Defined by an origin point and a normalized direction vector.
  */
 public class Ray {
 
@@ -16,10 +14,11 @@ public class Ray {
 	/** The normalized direction vector of the ray */
 	private final Vector _direction;
 
+	/** Constant for ray head shifting to avoid self intersection and self shading */
+	private static final double DELTA = 0.1;
+
 	/**
-	 * Constructor for Ray. Automatically normalizes the direction vector before
-	 * saving it.
-	 * 
+	 * Constructor for Ray. Automatically normalizes the direction vector before saving it.
 	 * @param origin    the origin point
 	 * @param direction the direction vector
 	 */
@@ -29,8 +28,26 @@ public class Ray {
 	}
 
 	/**
+	 * Constructor for Ray that automatically offsets the origin point along the
+	 * normal vector to avoid self shading and self intersection.
+	 * @param origin    the original interaction point
+	 * @param direction the direction of the new secondary ray
+	 * @param normal    the surface normal vector at the origin point
+	 */
+	public Ray(Point origin, Vector direction, Vector normal) {
+		this._direction = direction.normalize();
+		double nv = normal.dotProduct(this._direction);
+		
+		if (Util.isZero(nv)) {
+			this._origin = origin;
+		} else {
+			Vector deltaVector = normal.scale(nv > 0 ? DELTA : -DELTA);
+			this._origin = origin.add(deltaVector);
+		}
+	}
+
+	/**
 	 * Returns the origin point of the ray.
-	 * 
 	 * @return the origin
 	 */
 	public Point origin() {
@@ -39,7 +56,6 @@ public class Ray {
 
 	/**
 	 * Returns the direction vector of the ray.
-	 * 
 	 * @return the direction
 	 */
 	public Vector direction() {
@@ -62,53 +78,21 @@ public class Ray {
 	}
 
 	/**
-	 * Calculates a point on the ray at a distance t from the origin
-	 * 
-	 * @param t distance from the ray origin (can be positive, negative or zero)
-	 * @return the calculated point: P = P0 + t * v
+	 * Calculates a point on the ray at a distance t from the origin.
+	 * @param t distance from the ray origin
+	 * @return the calculated point
 	 */
 	public Point getPoint(double t) {
 		try {
-			// P = P0 + t * v
 			return _origin.add(_direction.scale(t));
 		} catch (Exception e) {
-			// In case t is so small that scaling results in Vector(0,0,0)
 			return _origin;
 		}
 	}
 
 	/**
-	 * Finds the closest point to the ray's head from a list of points.
-	 * 
-	 * @param points a list of points
-	 * @return the closest point, or null if the list is empty/null
-	 */
-
-//	public Point findClosestPoint(List<Point> points) {
-//		if (points == null) {
-//			return null; // Case of an empty or null list
-//		}
-//
-//		Point closestPoint = null;
-//		double minDistance = Double.POSITIVE_INFINITY; // Initialization to infinity
-//
-//		for (Point point : points) {
-//			// Using squared distance to optimize performance
-//			double distance = point.distanceSquared(this._origin);
-//
-//			if (distance < minDistance) {
-//				minDistance = distance;
-//				closestPoint = point;
-//			}
-//		}
-//
-//		return closestPoint;
-//	}
-
-	/**
-	 * Finds the closest Intersection to the ray's origin from a list of
-	 * intersections. * @param intersections a list of intersections
-	 * 
+	 * Finds the closest Intersection to the ray's origin from a list of intersections.
+	 * @param intersections a list of intersections
 	 * @return the closest Intersection, or null if the list is empty/null
 	 */
 	public Intersection findClosestIntersection(List<Intersection> intersections) {
@@ -132,9 +116,8 @@ public class Ray {
 	}
 
 	/**
-	 * Finds the closest point to the ray's origin from a list of points. Kept for
-	 * backward compatibility. * @param points a list of points
-	 * 
+	 * Finds the closest point to the ray's origin from a list of points. Kept for backward compatibility.
+	 * @param points a list of points
 	 * @return the closest point, or null if the list is empty/null
 	 */
 	public Point findClosestPoint(List<Point> points) {

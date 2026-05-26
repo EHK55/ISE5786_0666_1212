@@ -2,7 +2,6 @@ package primitives;
 
 /**
  * Material class representing the physical properties of a geometry's surface.
- * This class uses a builder-like fluent API.
  */
 public class Material {
     /** Attenuation coefficient of ambient light */
@@ -11,6 +10,10 @@ public class Material {
     public Double3 kD = new Double3(0.0, 0.0, 0.0);
     /** Attenuation coefficient of specular reflection */
     public Double3 kS = new Double3(0.0, 0.0, 0.0);
+    /** Attenuation coefficient of transparency */
+    public Double3 kT = Double3.ZERO;
+    /** Attenuation coefficient of reflection */
+    public Double3 kR = Double3.ZERO;
     /** Shininess exponent of the material */
     public int nShininess = 0;
 
@@ -20,7 +23,7 @@ public class Material {
     public Material() {}
 
     /**
-     * Setter for kA using Double3 (chained).
+     * Setter for kA using Double3.
      * @param kA the ambient light attenuation coefficient
      * @return this Material instance
      */
@@ -30,17 +33,17 @@ public class Material {
     }
 
     /**
-     * Setter for kA using double (chained).
+     * Setter for kA using double.
      * @param kA the ambient light attenuation coefficient
      * @return this Material instance
      */
     public Material setKA(double kA) {
-        this.kA = new Double3(kA, kA, kA);
+        this.kA = new Double3(kA);
         return this;
     }
 
     /**
-     * Setter for kD using Double3 (chained).
+     * Setter for kD using Double3.
      * @param kD the diffuse reflection coefficient
      * @return this Material instance
      */
@@ -50,17 +53,17 @@ public class Material {
     }
 
     /**
-     * Setter for kD using double (chained).
+     * Setter for kD using double.
      * @param kD the diffuse reflection coefficient
      * @return this Material instance
      */
     public Material setKD(double kD) {
-        this.kD = new Double3(kD, kD, kD);
+        this.kD = new Double3(kD);
         return this;
     }
 
     /**
-     * Setter for kS using Double3 (chained).
+     * Setter for kS using Double3.
      * @param kS the specular reflection coefficient
      * @return this Material instance
      */
@@ -70,17 +73,57 @@ public class Material {
     }
 
     /**
-     * Setter for kS using double (chained).
+     * Setter for kS using double.
      * @param kS the specular reflection coefficient
      * @return this Material instance
      */
-    public Material setKs(double kS) {
-        this.kS = new Double3(kS, kS, kS);
+    public Material setKS(double kS) {
+        this.kS = new Double3(kS);
         return this;
     }
 
     /**
-     * Setter for shininess (chained).
+     * Setter for kT using Double3.
+     * @param kT the transparency attenuation coefficient
+     * @return this Material instance
+     */
+    public Material setKT(Double3 kT) {
+        this.kT = kT;
+        return this;
+    }
+
+    /**
+     * Setter for kT using double.
+     * @param kT the transparency attenuation coefficient
+     * @return this Material instance
+     */
+    public Material setKT(double kT) {
+        this.kT = new Double3(kT);
+        return this;
+    }
+
+    /**
+     * Setter for kR using Double3.
+     * @param kR the reflection attenuation coefficient
+     * @return this Material instance
+     */
+    public Material setKR(Double3 kR) {
+        this.kR = kR;
+        return this;
+    }
+
+    /**
+     * Setter for kR using double.
+     * @param kR the reflection attenuation coefficient
+     * @return this Material instance
+     */
+    public Material setKR(double kR) {
+        this.kR = new Double3(kR);
+        return this;
+    }
+
+    /**
+     * Setter for shininess.
      * @param nShininess the shininess exponent
      * @return this Material instance
      */
@@ -88,4 +131,6 @@ public class Material {
         this.nShininess = nShininess;
         return this;
     }
+    
+    
 }
