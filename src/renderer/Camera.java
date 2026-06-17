@@ -395,6 +395,11 @@ public class Camera implements Cloneable {
 			}
 			return this;
 		}
+
+		public Builder setRayTracer(RayTracerBase rayTracer) {
+			camera._rayTracer = rayTracer;
+			return this;
+		}
 	}
 
 	/**
