@@ -141,7 +141,7 @@ public class Camera implements Cloneable {
 	 * threadsCount > 0. * @return the camera instance
 	 */
 	public Camera renderImage() {
-		// --- Option 1 : Rendu Single-Thread (Classique / Débogage) ---
+		// --- Option 1: Single-Threaded Rendering (Standard / Debugging) ---
 		if (threadsCount == 0) {
 			for (int i = 0; i < nX; i++) {
 				for (int j = 0; j < nY; j++) {
@@ -149,24 +149,25 @@ public class Camera implements Cloneable {
 				}
 			}
 		}
-		// --- Option 2 : Rendu Multi-Thread (Performance Max) ---
+		// --- Option 2: Multi-Threaded Rendering (Max Performance) ---
 		else {
-			// Initialisation du manager avec le nombre de lignes (nY) et colonnes (nX)
+			// Initialize manager with the number of rows (nY) and columns (nX)
 			PixelManager pixelManager = new PixelManager(nY, nX, printInterval);
 			Thread[] threads = new Thread[threadsCount];
 
-			// Création et lancement des Threads (les "Ouvriers")
+			// Create and start worker threads
 			for (int i = 0; i < threadsCount; i++) {
 				threads[i] = new Thread(() -> {
 					PixelManager.Pixel pixel;
 					while ((pixel = pixelManager.nextPixel()) != null) {
-						castRay(pixel.col(), pixel.row()); // Calcule la couleur
-						pixelManager.pixelDone(); // Signale que le pixel est terminé (pour la barre de progression)
+						castRay(pixel.col(), pixel.row()); // Calculate pixel color
+						pixelManager.pixelDone(); // Signal that the pixel processing is complete
 					}
 				});
-				threads[i].start(); // Lance l'ouvrier
+				threads[i].start(); // Start the worker thread
 			}
 
+			// Wait for all threads to finish execution
 			for (Thread thread : threads) {
 				try {
 					thread.join();
