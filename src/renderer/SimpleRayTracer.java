@@ -22,22 +22,40 @@ import scene.Scene;
 public class SimpleRayTracer extends RayTracerBase {
 
 	/** Recursion termination constant for maximum depth level */
-	private static final int MAX_CALC_COLOR_LEVEL = 5;
+	private static final int MAX_CALC_COLOR_LEVEL = 3;
 	/** Recursion termination constant for minimal attenuation threshold factor */
 	private static final double MIN_CALC_COLOR_K = 0.001;
 	/** Initial cumulative attenuation factor value */
 	private static final Double3 INITIAL_K = Double3.ONE;
+	/** Resolution for the beam of rays (Super-Sampling) */
 	private int beamResolution = 1;
+	/** Flag to enable or disable Jittered Sampling */
+	private boolean useJittered = false; // Disabled by default
 
+	/**
+	 * Sets the resolution of the ray beam for Super-Sampling. * @param resolution
+	 * the resolution to set
+	 * 
+	 * @return the SimpleRayTracer instance
+	 */
 	public SimpleRayTracer setBeamResolution(int resolution) {
 		this.beamResolution = resolution;
 		return this;
 	}
 
 	/**
-	 * Constructor for SimpleRayTracer.
+	 * Sets the Jittered Sampling mode. * @param useJittered true to enable
+	 * jittering, false for regular grid
 	 * 
-	 * @param scene the scene
+	 * @return the SimpleRayTracer instance
+	 */
+	public SimpleRayTracer setJittered(boolean useJittered) {
+		this.useJittered = useJittered;
+		return this;
+	}
+
+	/**
+	 * Constructor for SimpleRayTracer. * @param scene the scene
 	 */
 	public SimpleRayTracer(Scene scene) {
 		super(scene);
@@ -50,10 +68,10 @@ public class SimpleRayTracer extends RayTracerBase {
 	}
 
 	/**
-	 * Non-recursive wrapper method introducing ambient light exactly once.
+	 * Non-recursive wrapper method introducing ambient light exactly once. * @param
+	 * intersection the closest intersection point
 	 * 
-	 * @param intersection the closest intersection point
-	 * @param v            the ray direction vector
+	 * @param v the ray direction vector
 	 * @return the completely calculated pixel color
 	 */
 	private Color calcColor(Intersection intersection, Vector v) {
@@ -66,11 +84,11 @@ public class SimpleRayTracer extends RayTracerBase {
 
 	/**
 	 * Recursive color calculation processing local shading effects aggregated with
-	 * recursive global effects.
+	 * recursive global effects. * @param intersection the processed intersection
+	 * point
 	 * 
-	 * @param intersection the processed intersection point
-	 * @param level        current recursion depth tree level
-	 * @param k            cumulative attenuation path index factor
+	 * @param level current recursion depth tree level
+	 * @param k     cumulative attenuation path index factor
 	 * @return color computed up to the current recursive layer bounds
 	 */
 	private Color calcColor(Intersection intersection, int level, Double3 k) {
@@ -80,10 +98,9 @@ public class SimpleRayTracer extends RayTracerBase {
 
 	/**
 	 * Calculates the local lighting effects (emission, diffuse, specular) at an
-	 * intersection.
+	 * intersection. * @param intersection the intersection point
 	 * 
-	 * @param intersection the intersection point
-	 * @param k            cumulative attenuation factor
+	 * @param k cumulative attenuation factor
 	 * @return the calculated color of local effects
 	 */
 	private Color calcLocalEffects(Intersection intersection, Double3 k) {
@@ -101,9 +118,9 @@ public class SimpleRayTracer extends RayTracerBase {
 	}
 
 	/**
-	 * Calculates the diffuse reflection factor.
+	 * Calculates the diffuse reflection factor. * @param intersection the
+	 * intersection point
 	 * 
-	 * @param intersection the intersection point
 	 * @return the diffuse reflection coefficient
 	 */
 	private Double3 calcDiffuse(Intersection intersection) {
@@ -112,9 +129,9 @@ public class SimpleRayTracer extends RayTracerBase {
 	}
 
 	/**
-	 * Calculates the specular reflection factor.
+	 * Calculates the specular reflection factor. * @param intersection the
+	 * intersection point
 	 * 
-	 * @param intersection the intersection point
 	 * @return the specular reflection coefficient
 	 */
 	private Double3 calcSpecular(Intersection intersection) {
@@ -130,10 +147,10 @@ public class SimpleRayTracer extends RayTracerBase {
 
 	/**
 	 * Computes the aggregated partial transparency opacity level along a specific
-	 * shadow ray path.
+	 * shadow ray path. * @param intersection the original shaded intersection
+	 * surface reference
 	 * 
-	 * @param intersection the original shaded intersection surface reference
-	 * @param lightSource  the targeted illumination light source emitter
+	 * @param lightSource the targeted illumination light source emitter
 	 * @return multi-channel light propagation drop ratio coefficient
 	 */
 	private Double3 transparency(Intersection intersection, LightSource lightSource) {
@@ -161,10 +178,9 @@ public class SimpleRayTracer extends RayTracerBase {
 
 	/**
 	 * Legacy visibility tracking method preserved for validation backwards
-	 * compatibility benchmarks.
+	 * compatibility benchmarks. * @param intersection target surface coordinates
 	 * 
-	 * @param intersection target surface coordinates
-	 * @param lightSource  referenced light source instance
+	 * @param lightSource referenced light source instance
 	 * @return true if light source is unshaded by any sufficiently opaque
 	 *         structural body
 	 */
@@ -190,11 +206,11 @@ public class SimpleRayTracer extends RayTracerBase {
 
 	/**
 	 * Combines multiple global illumination recursively tracked components
-	 * (Reflection + Refraction).
+	 * (Reflection + Refraction). * @param intersection localized surface vector
+	 * metadata context
 	 * 
-	 * @param intersection localized surface vector metadata context
-	 * @param level        recursive step tree index level
-	 * @param k            cumulative coefficient index track
+	 * @param level recursive step tree index level
+	 * @param k     cumulative coefficient index track
 	 * @return combined color contribution from secondary ray channels
 	 */
 	private Color calcGlobalEffects(Intersection intersection, int level, Double3 k) {
@@ -219,9 +235,8 @@ public class SimpleRayTracer extends RayTracerBase {
 
 	/**
 	 * Evaluates a single specific secondary recursive global lighting channel
-	 * branch path.
+	 * branch path. * @param ray secondary ray reference trace line tracking context
 	 * 
-	 * @param ray   secondary ray reference trace line tracking context
 	 * @param level recursive step tree index level
 	 * @param k     cumulative index product track
 	 * @param kx    target geometry material effect type factor channel
@@ -245,9 +260,8 @@ public class SimpleRayTracer extends RayTracerBase {
 
 	/**
 	 * Centralized utility helper to query raw scene elements intersection data and
-	 * extract closest point.
+	 * extract closest point. * @param ray targeted tracking line parameter
 	 * 
-	 * @param ray targeted tracking line parameter
 	 * @return absolute closest localized intersection record data or null
 	 */
 	private Intersection findClosestIntersection(Ray ray) {
@@ -256,9 +270,9 @@ public class SimpleRayTracer extends RayTracerBase {
 	}
 
 	/**
-	 * Constructs a secondary transparency transmission ray.
+	 * Constructs a secondary transparency transmission ray. * @param intersection
+	 * localized source origin point tracking metadata
 	 * 
-	 * @param intersection localized source origin point tracking metadata
 	 * @return secondary refractive transmission ray line element
 	 */
 	private Ray constructTransparencyRay(Intersection intersection) {
@@ -267,8 +281,8 @@ public class SimpleRayTracer extends RayTracerBase {
 
 	/**
 	 * Constructs a secondary mirror-like specular reflection trace ray vector.
+	 * * @param intersection localized surface point context
 	 * 
-	 * @param intersection localized surface point context
 	 * @return secondary specular reflection ray line element or null if parallel
 	 */
 	private Ray constructReflectionRay(Intersection intersection) {
@@ -279,15 +293,20 @@ public class SimpleRayTracer extends RayTracerBase {
 		return new Ray(intersection.point, r, intersection.normal);
 	}
 
+	/**
+	 * Constructs a beam of rays around a central ray for Super-Sampling effects.
+	 * * @param centerRay The main directional ray
+	 * 
+	 * @param blurRadius The radius of the target surface
+	 * @param n          The normal vector of the intersected geometry
+	 * @return A list of scattered rays
+	 */
 	private List<Ray> constructRayBeam(Ray centerRay, double blurRadius, Vector n) {
 		List<Ray> beam = new ArrayList<>();
 
-		// AVANT (avec le risque d'une constante en dur)
-		// List<Point2D> points2D = Blackboard.generateJitteredPoints(blurRadius,
-		// BEAM_RESOLUTION, true);
-
-		// APRÈS (utilisation de ton nouveau champ dynamique)
-		List<Point2D> points2D = Blackboard.generateJitteredPoints(blurRadius, this.beamResolution, true);
+		// Generate 2D points using the dynamic beam resolution and jitter flag
+		List<Point2D> points2D = Blackboard.generateJitteredPoints(blurRadius, this.beamResolution, true,
+				this.useJittered);
 
 		if (points2D.size() == 1) {
 			beam.add(centerRay);
@@ -330,9 +349,17 @@ public class SimpleRayTracer extends RayTracerBase {
 		return beam;
 	}
 
+	/**
+	 * Calculates the average color contribution from a beam of scattered rays.
+	 * * @param rays List of secondary rays generated for Super-Sampling
+	 * 
+	 * @param level recursive step tree index level
+	 * @param k     cumulative index product track
+	 * @param kx    target geometry material effect type factor channel
+	 * @return The averaged color of all valid rays
+	 */
 	private Color calcAverageGlobalEffect(List<Ray> rays, int level, Double3 k, Double3 kx) {
-		// SÉCURITÉ : Si tous les rayons ont été filtrés (ou liste vide), on renvoie du
-		// noir.
+		// SAFETY: If all rays were filtered out (or the list is empty), return black.
 		if (rays == null || rays.isEmpty()) {
 			return Color.BLACK;
 		}
@@ -342,7 +369,7 @@ public class SimpleRayTracer extends RayTracerBase {
 			color = color.add(calcGlobalEffect(ray, level, k, kx));
 		}
 
-		// On divise par la taille RÉELLE de la liste (ceux qui ont survécu au filtre)
+		// Average the color by dividing by the ACTUAL size of the list (surviving rays)
 		return color.reduce(rays.size());
 	}
 }

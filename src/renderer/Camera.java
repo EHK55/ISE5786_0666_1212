@@ -37,6 +37,11 @@ public class Camera implements Cloneable {
 	private ImageWriter imageWriter;
 	private RayTracerBase _rayTracer;
 
+	/** Amount of threads to use for rendering */
+	private int threadsCount = 0; // 0 means single-threaded
+	/** Interval for printing progress (in seconds) */
+	private double printInterval = 0; // 0 means no printing
+
 	/**
 	 * Private constructor for Camera to be used only by its Builder.
 	 */
@@ -132,14 +137,42 @@ public class Camera implements Cloneable {
 	}
 
 	/**
-	 * Renders the image by casting rays for every pixel.
-	 * 
-	 * @return the camera instance
+	 * Renders the image by casting rays for every pixel. Uses multi-threading if
+	 * threadsCount > 0. * @return the camera instance
 	 */
 	public Camera renderImage() {
-		for (int i = 0; i < nX; i++) {
-			for (int j = 0; j < nY; j++) {
-				castRay(i, j);
+		// --- Option 1 : Rendu Single-Thread (Classique / Débogage) ---
+		if (threadsCount == 0) {
+			for (int i = 0; i < nX; i++) {
+				for (int j = 0; j < nY; j++) {
+					castRay(i, j);
+				}
+			}
+		}
+		// --- Option 2 : Rendu Multi-Thread (Performance Max) ---
+		else {
+			// Initialisation du manager avec le nombre de lignes (nY) et colonnes (nX)
+			PixelManager pixelManager = new PixelManager(nY, nX, printInterval);
+			Thread[] threads = new Thread[threadsCount];
+
+			// Création et lancement des Threads (les "Ouvriers")
+			for (int i = 0; i < threadsCount; i++) {
+				threads[i] = new Thread(() -> {
+					PixelManager.Pixel pixel;
+					while ((pixel = pixelManager.nextPixel()) != null) {
+						castRay(pixel.col(), pixel.row()); // Calcule la couleur
+						pixelManager.pixelDone(); // Signale que le pixel est terminé (pour la barre de progression)
+					}
+				});
+				threads[i].start(); // Lance l'ouvrier
+			}
+
+			for (Thread thread : threads) {
+				try {
+					thread.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return this;
@@ -237,6 +270,35 @@ public class Camera implements Cloneable {
 		 */
 		public Builder setLocation(Point p0) {
 			this.camera.p0 = p0;
+			return this;
+		}
+
+		/**
+		 * Sets the number of threads for multi-threading rendering. * @param threads
+		 * amount of threads (0 for single-threaded, typically 3 or 4 for
+		 * multi-threading)
+		 * 
+		 * @return The Builder instance
+		 */
+		public Builder setMultithreading(int threads) {
+			if (threads < 0) {
+				throw new IllegalArgumentException("Number of threads must be 0 or higher");
+			}
+			this.camera.threadsCount = threads;
+			return this;
+		}
+
+		/**
+		 * Sets the print interval for the progress percentage. * @param interval
+		 * interval in seconds (0 means no printing)
+		 * 
+		 * @return The Builder instance
+		 */
+		public Builder setDebugPrint(double interval) {
+			if (interval < 0) {
+				throw new IllegalArgumentException("Print interval cannot be negative");
+			}
+			this.camera.printInterval = interval;
 			return this;
 		}
 

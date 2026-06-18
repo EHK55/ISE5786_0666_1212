@@ -202,9 +202,12 @@ public class ShowcaseTest {
 
 		Camera camera = Camera.getBuilder().setLocation(new Point(0, 70, 300))
 				.setDirection(new Point(0, -20, 0), new Vector(0, 1, 0)).setVpSize(200, 200).setVpDistance(200)
-				.setResolution(600, 600) // Résolution correcte
-				.setRayTracer(new SimpleRayTracer(scene).setBeamResolution(1)).build();
+				.setResolution(400, 400)
+				.setRayTracer(new SimpleRayTracer(scene).setBeamResolution(1).setJittered(false)) // 1 seul rayon
+				.setMultithreading(4) // <--- AJOUTE ÇA ICI AUSSI
 
+				.setDebugPrint(0.5) // <--- AJOUTE ÇA ICI AUSSI
+				.build();
 		long startTime = System.currentTimeMillis();
 		camera.renderImage().writeToImage("Showcase_Final_NoBlur");
 		long endTime = System.currentTimeMillis();
@@ -218,13 +221,16 @@ public class ShowcaseTest {
 
 		Camera camera = Camera.getBuilder().setLocation(new Point(0, 70, 300))
 				.setDirection(new Point(0, -20, 0), new Vector(0, 1, 0)).setVpSize(200, 200).setVpDistance(200)
-				.setResolution(600, 600) // MÊME Résolution
-				.setRayTracer(new SimpleRayTracer(scene).setBeamResolution(5)).build(); // 9 rayons
-
+				.setResolution(400, 400).setRayTracer(new SimpleRayTracer(scene).setBeamResolution(9).setJittered(true)) // 9
+																															// rayons
+				.setMultithreading(4) // <--- AJOUTE ÇA ICI (Active les 4 cœurs)
+				.setDebugPrint(0.5) // <--- AJOUTE ÇA ICI (Affiche la progression toutes les demi-secondes)
+				.build();
 		long startTime = System.currentTimeMillis();
 		camera.renderImage().writeToImage("Showcase_Final_WithBlur");
 		long endTime = System.currentTimeMillis();
 
 		System.out.println("Temps AVEC Super-Sampling : " + (endTime - startTime) / 1000.0 + " secondes");
 	}
+
 }
