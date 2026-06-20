@@ -12,6 +12,8 @@ import primitives.Material;
 import primitives.Point;
 import primitives.Point2D;
 import primitives.Ray;
+import primitives.SamplingPattern;
+import primitives.TargetShape;
 import primitives.Vector;
 import scene.Scene;
 
@@ -29,8 +31,8 @@ public class SimpleRayTracer extends RayTracerBase {
 	private static final Double3 INITIAL_K = Double3.ONE;
 	/** Resolution for the beam of rays (Super-Sampling) */
 	private int beamResolution = 1;
-	/** Flag to enable or disable Jittered Sampling */
-	private boolean useJittered = false; // Disabled by default
+
+	private SamplingPattern samplingPattern = SamplingPattern.GRID; // Default to standard Grid
 
 	/**
 	 * Sets the resolution of the ray beam for Super-Sampling. * @param resolution
@@ -44,13 +46,13 @@ public class SimpleRayTracer extends RayTracerBase {
 	}
 
 	/**
-	 * Sets the Jittered Sampling mode. * @param useJittered true to enable
-	 * jittering, false for regular grid
+	 * Sets the sampling pattern mode.
 	 * 
+	 * @param pattern the sampling pattern to set (GRID or JITTERED)
 	 * @return the SimpleRayTracer instance
 	 */
-	public SimpleRayTracer setJittered(boolean useJittered) {
-		this.useJittered = useJittered;
+	public SimpleRayTracer setPattern(SamplingPattern pattern) {
+		this.samplingPattern = pattern;
 		return this;
 	}
 
@@ -305,9 +307,8 @@ public class SimpleRayTracer extends RayTracerBase {
 		List<Ray> beam = new ArrayList<>();
 
 		// Generate 2D points using the dynamic beam resolution and jitter flag
-		List<Point2D> points2D = Blackboard.generateJitteredPoints(blurRadius, this.beamResolution, true,
-				this.useJittered);
-
+		List<Point2D> points2D = Blackboard.generateJitteredPoints(blurRadius, this.beamResolution, TargetShape.CIRCLE,
+				this.samplingPattern);
 		if (points2D.size() == 1) {
 			beam.add(centerRay);
 			return beam;

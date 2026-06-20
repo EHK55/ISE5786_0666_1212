@@ -11,6 +11,7 @@ import primitives.Color;
 import primitives.Double3;
 import primitives.Material;
 import primitives.Point;
+import primitives.SamplingPattern;
 import primitives.Vector;
 import scene.Scene;
 
@@ -86,8 +87,9 @@ public class ShowcaseTest {
 
 		Camera camera = Camera.getBuilder().setLocation(new Point(0, 70, 300))
 				.setDirection(new Point(0, -20, 0), new Vector(0, 1, 0)).setVpSize(200, 200).setVpDistance(200)
-				.setResolution(600, 600)
-				.setRayTracer(new SimpleRayTracer(scene).setBeamResolution(1).setJittered(false)) // 1 single ray
+				.setResolution(600, 600).setRayTracer((new SimpleRayTracer(scene))) // 1
+																					// single
+																					// ray
 				.setMultithreading(4) // <--- ADD THIS HERE
 				.setDebugPrint(0.5) // <--- ADD THIS HERE
 				.build();
@@ -104,8 +106,9 @@ public class ShowcaseTest {
 
 		Camera camera = Camera.getBuilder().setLocation(new Point(0, 70, 300))
 				.setDirection(new Point(0, -20, 0), new Vector(0, 1, 0)).setVpSize(200, 200).setVpDistance(200)
-				.setResolution(600, 600).setRayTracer(new SimpleRayTracer(scene).setBeamResolution(9).setJittered(true)) // 9
-																															// rays
+				.setResolution(600, 600)
+				.setRayTracer((new SimpleRayTracer(scene).setBeamResolution(9).setPattern(SamplingPattern.JITTERED))) // 9
+																														// rays
 				.setMultithreading(4) // <--- ADD THIS HERE (Enable 4 cores)
 				.setDebugPrint(0.5) // <--- ADD THIS HERE (Display progress every 0.5s)
 				.build();

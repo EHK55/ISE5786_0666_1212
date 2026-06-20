@@ -10,6 +10,7 @@ import primitives.Color;
 import primitives.Double3;
 import primitives.Material;
 import primitives.Point;
+import primitives.SamplingPattern;
 import primitives.Vector;
 import scene.Scene;
 
@@ -27,7 +28,7 @@ public class GlossyTest {
 		scene.geometries.add(
 				// GLOSSY MIRROR FLOOR
 				new Plane(new Point(0, -30, 0), new Vector(0, 1, 0)).setEmission(new Color(20, 20, 20))
-						.setMaterial(new Material().setKD(0.5).setKR(1.0).setBlurRadius(0.05)),
+						.setMaterial(new Material().setKD(0.5).setKR(1.0).setBlurRadius(100)),
 
 				// RED SPHERE
 				new Sphere(new Point(-40, 0, 50), 30d).setEmission(new Color(255, 0, 0))
@@ -51,9 +52,8 @@ public class GlossyTest {
 		Camera camera = Camera.getBuilder().setLocation(new Point(0, 150, 600))
 				// Vectors calculated to look downwards (0, -0.25, -1) orthogonally
 				.setDirection(new Vector(0, -0.25, -1), new Vector(0, 1, -0.25)).setVpSize(150, 150).setVpDistance(400)
-				.setResolution(600, 600)
-				.setRayTracer(new SimpleRayTracer(scene).setBeamResolution(1).setJittered(false)).setMultithreading(4)
-				.setDebugPrint(0.5).build();
+				.setResolution(600, 600).setRayTracer(new SimpleRayTracer(scene).setBeamResolution(1))
+				.setMultithreading(4).setDebugPrint(0.5).build();
 
 		long startTime = System.currentTimeMillis();
 		camera.renderImage().writeToImage("GlossyFloor_NoBlur");
@@ -68,8 +68,8 @@ public class GlossyTest {
 				.setDirection(new Vector(0, -0.25, -1), new Vector(0, 1, -0.25)).setVpSize(150, 150).setVpDistance(400)
 				.setResolution(600, 600)
 				// Enable Super-Sampling x9 and Jittering
-				.setRayTracer(new SimpleRayTracer(scene).setBeamResolution(9).setJittered(true)).setMultithreading(4)
-				.setDebugPrint(0.5).build();
+				.setRayTracer((new SimpleRayTracer(scene).setBeamResolution(9).setPattern(SamplingPattern.JITTERED)))
+				.setMultithreading(4).setDebugPrint(0.5).build();
 
 		long startTime = System.currentTimeMillis();
 		camera.renderImage().writeToImage("GlossyFloor_WithBlur");

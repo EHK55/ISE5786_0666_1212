@@ -10,6 +10,7 @@ import primitives.Color;
 import primitives.Double3;
 import primitives.Material;
 import primitives.Point;
+import primitives.SamplingPattern;
 import primitives.Vector;
 import scene.Scene;
 
@@ -54,9 +55,8 @@ public class DiffuseGlassTest {
 		Camera camera = Camera.getBuilder().setLocation(new Point(0, 0, 200))
 				// vTo = forward, vUp = up (orthogonal)
 				.setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0)).setVpSize(150, 150).setVpDistance(100)
-				.setResolution(600, 600)
-				.setRayTracer(new SimpleRayTracer(scene).setBeamResolution(1).setJittered(false)).setMultithreading(4)
-				.setDebugPrint(0.5).build();
+				.setResolution(600, 600).setRayTracer(new SimpleRayTracer(scene).setBeamResolution(1))
+				.setMultithreading(4).setDebugPrint(0.5).build();
 
 		long startTime = System.currentTimeMillis();
 		camera.renderImage().writeToImage("DiffuseGlass_NoBlur");
@@ -72,8 +72,8 @@ public class DiffuseGlassTest {
 				.setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0)).setVpSize(150, 150).setVpDistance(100)
 				.setResolution(600, 600)
 				// Enable Super-Sampling x9 and Jittering
-				.setRayTracer(new SimpleRayTracer(scene).setBeamResolution(9).setJittered(true)).setMultithreading(4)
-				.setDebugPrint(0.5).build();
+				.setRayTracer((new SimpleRayTracer(scene).setBeamResolution(9).setPattern(SamplingPattern.JITTERED)))
+				.setMultithreading(4).setDebugPrint(0.5).build();
 
 		long startTime = System.currentTimeMillis();
 		camera.renderImage().writeToImage("DiffuseGlass_WithBlur");
