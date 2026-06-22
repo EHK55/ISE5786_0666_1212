@@ -166,7 +166,8 @@ public class Camera implements Cloneable {
 	 * @return the camera object itself
 	 */
 	private Camera renderImageStream() {
-		IntStream.range(0, nY).parallel().forEach(i -> IntStream.range(0, nX).parallel().forEach(j -> castRay(j, i)));
+		IntStream.range(0, nY).parallel().forEach(i -> 
+		  IntStream.range(0, nX).parallel().forEach(j -> castRay(j, i)));
 		return this;
 	}
 
@@ -184,19 +185,25 @@ public class Camera implements Cloneable {
 
 	/**
 	 * Render image using multi-threading by creating and running raw threads
-	 * 
-	 * @return the camera object itself
+	 * * @return the camera object itself
 	 */
 	private Camera renderImageRawThreads() {
 		var threads = new LinkedList<Thread>();
-		while (threadsCount-- > 0)
+		int count = threadsCount; // שימוש במשתנה מקומי כדי לא לדרוס את שדה המחלקה
+		
+		while (count > 0) {
 			threads.add(new Thread(() -> {
 				Pixel pixel;
-				while ((pixel = pixelManager.nextPixel()) != null)
-					castRay(pixel.col(), pixel.row());
+				while ((pixel = pixelManager.nextPixel()) != null) {
+					castRay(pixel.row(), pixel.col());
+				}
 			}));
+			count--;
+		}
+		
 		for (var thread : threads)
 			thread.start();
+			
 		try {
 			for (var thread : threads)
 				thread.join();
@@ -513,6 +520,25 @@ public class Camera implements Cloneable {
 
 		public Builder setRayTracer(RayTracerBase rayTracer) {
 			camera._rayTracer = rayTracer;
+			return this;
+		}
+		
+		/**
+		 * Enables the CBR (Conservative Bounding Region) acceleration.
+		 * @return the Builder object itself
+		 */
+		public Builder enableCBR() {
+			geometries.api.Intersectable.setCbrActive(true);
+			return this;
+		}
+		
+		/**
+		 * Enables the BVH (Bounding Volume Hierarchy) acceleration.
+		 * @return the Builder object itself
+		 */
+		public Builder enableBVH() {
+			geometries.api.Intersectable.setCbrActive(true);
+			geometries.impl.Geometries.setBvhActive(true);
 			return this;
 		}
 	}

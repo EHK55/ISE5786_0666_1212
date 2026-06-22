@@ -69,6 +69,14 @@ public final class Plane extends Geometry {
 			// Ray starts on the plane
 			return null;
 		}
+		
+		
+	}
+	
+	@Override
+	protected void buildBox() {
+		// Infinite shapes cannot be bounded by a box
+		box = null;
 	}
 
 }

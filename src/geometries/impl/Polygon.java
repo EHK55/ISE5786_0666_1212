@@ -120,4 +120,17 @@ public class Polygon extends Geometry {
 
 		return List.of(new Intersection(this, planeIntersections.get(0)));
 	}
+	
+	@Override
+	protected void buildBox() {
+		if (_vertices == null || _vertices.isEmpty()) return;
+		
+		// Initialize the bounding box with the first vertex
+		box = new primitives.BoundingBox(_vertices.get(0));
+		
+		// Expand the box to include all other vertices
+		for (int i = 1; i < _vertices.size(); i++) {
+			box = box.expand(_vertices.get(i));
+		}
+	}
 }

@@ -65,6 +65,26 @@ public abstract class Intersectable {
                     '}';
         }
     }
+    
+    /** Bounding Box associated with this intersectable shape */
+    public BoundingBox box;
+    
+    /** Flag to activate or deactivate the CBR mechanism globally */
+    protected static boolean cbrActive = false;
+
+    public static void setCbrActive(boolean active) {
+        cbrActive = active;
+    }
+
+    protected abstract void buildBox();
+
+    public final List<Intersection> calcIntersections(Ray ray) {
+        
+        if (cbrActive && box != null && !box.isIntersected(ray)) {
+            return null;
+        }
+        return calcIntersectionsHelper(ray);
+    }
 
     /**
      * Finds all intersections of a ray with this shape.
@@ -81,9 +101,9 @@ public abstract class Intersectable {
      * @param ray the ray
      * @return list of intersections
      */
-    public final List<Intersection> calcIntersections(Ray ray) {
-        return calcIntersectionsHelper(ray);
-    }
+//    public final List<Intersection> calcIntersections(Ray ray) {
+//        return calcIntersectionsHelper(ray);
+//    }
 
     /**
      * Helper method for calculating intersections.
@@ -91,4 +111,7 @@ public abstract class Intersectable {
      * @return list of intersections
      */
     protected abstract List<Intersection> calcIntersectionsHelper(Ray ray);
+
+    
+    
 }
