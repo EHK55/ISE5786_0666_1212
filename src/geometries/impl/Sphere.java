@@ -71,7 +71,7 @@ public final class Sphere extends RadialGeometry {
 	}
 	
 	@Override
-	protected void buildBox() {
+	public void buildBox() {
 		// The bounding box is created legally using the new constructor in primitives
 		box = new primitives.BoundingBox(_center, _radius);
 	}

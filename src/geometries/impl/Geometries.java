@@ -12,19 +12,7 @@ import primitives.Ray;
 public class Geometries extends Intersectable {
 	private final List<Intersectable> _geometries = new ArrayList<>();
 
-	/** Flag to check if the BVH tree has already been built for this collection */
-	private volatile boolean _isBVHBuilt = false;
-	
-	/** Global flag to dynamically activate or deactivate BVH from the tests */
-	private static boolean bvhActive = false;
 
-	/**
-	 * Setter to dynamically activate or deactivate BVH from the tests.
-	 * @param active true to activate BVH
-	 */
-	public static void setBvhActive(boolean active) {
-		bvhActive = active;
-	}
 	
 	public Geometries() {
 	}
@@ -44,7 +32,6 @@ public class Geometries extends Intersectable {
 
 	@Override
 	protected List<Intersection> calcIntersectionsHelper(Ray ray) {
-		if (bvhActive && !_isBVHBuilt) initializeTreeSafely();
 		List<Intersection> result = null;
 		for (Intersectable geo : _geometries) {
 			var intersections = geo.calcIntersections(ray);
@@ -59,19 +46,10 @@ public class Geometries extends Intersectable {
 		return result;
 	}
 	
-	/**
-	 * Safely initializes the BVH tree exactly once.
-	 * Uses synchronized to prevent race conditions during multithreading rendering.
-	 */
-	private synchronized void initializeTreeSafely() {
-		if (_isBVHBuilt) return; // Double check inside the lock
-		
-		buildBVHTree();
-		_isBVHBuilt = true; // Mark as built ONLY when completely finished
-	}
+	
 	
 	@Override
-	protected void buildBox() {
+	public void buildBox() {
 		if (_geometries.isEmpty()) {
 			box = null;
 			return;
@@ -89,6 +67,7 @@ public class Geometries extends Intersectable {
 
 		// Expand the super-box to encompass all internal bounding boxes
 		for (Intersectable geo : _geometries) {
+			geo.buildBox(); 
 			if (geo.box != null) {
 				hasBox = true;
 				minX = Math.min(minX, geo.box.minX);
@@ -113,7 +92,7 @@ public class Geometries extends Intersectable {
 	 * Groups the internal geometries into a hierarchical binary tree structure 
 	 * to significantly optimize ray-intersection checks.
 	 */
-	private void buildBVHTree() {
+	public void buildBVHTree() {
 		
 		// Base case: 2 or fewer items don't need further grouping
 		if (_geometries.isEmpty() || _geometries.size() <= 2) {
@@ -171,14 +150,38 @@ public class Geometries extends Intersectable {
 
 		// Recursively build the hierarchy for the child nodes
 		leftGeometries.buildBVHTree();
-		leftGeometries._isBVHBuilt = true;
 
 		rightGeometries.buildBVHTree();
-		rightGeometries._isBVHBuilt = true;
 
 		// Replace the flat list with the two hierarchical nodes
 		_geometries.clear();
 		_geometries.add(leftGeometries);
 		_geometries.add(rightGeometries);
+	}
+	
+	/**
+	 * Flattens the hierarchical structure into a single flat Geometries object.
+	 * Required for Stage C2 control testing.
+	 * @return A new flat Geometries collection containing only the leaf geometries.
+	 */
+	public Geometries flatten() {
+		Geometries flatGeometries = new Geometries();
+		flattenHelper(this, flatGeometries);
+		return flatGeometries;
+	}
+
+	/**
+	 * Recursive helper method for flattening the hierarchy.
+	 * @param current The current intersectable being examined.
+	 * @param target The target Geometries collection to add leaves to.
+	 */
+	private void flattenHelper(Intersectable current, Geometries target) {
+		if (current instanceof Geometries composite) {
+			for (Intersectable item : composite._geometries) {
+				flattenHelper(item, target);
+			}
+		} else {
+			target.add(current); // It's a leaf (Sphere, Triangle, etc.)
+		}
 	}
 }

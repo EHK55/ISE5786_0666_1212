@@ -475,6 +475,7 @@ public class Camera implements Cloneable {
 				throw new IllegalArgumentException("Distance must be positive");
 
 		}
+		
 
 		/**
 		 * Finalizes the camera construction, performs calculations and validations.
@@ -525,20 +526,26 @@ public class Camera implements Cloneable {
 		
 		/**
 		 * Enables the CBR (Conservative Bounding Region) acceleration.
+		 * Delegates the activation to the RayTracer.
 		 * @return the Builder object itself
 		 */
 		public Builder enableCBR() {
-			geometries.api.Intersectable.setCbrActive(true);
+			if (this.camera._rayTracer != null) {
+				this.camera._rayTracer.setCbrActive(true);
+			}
 			return this;
 		}
 		
 		/**
 		 * Enables the BVH (Bounding Volume Hierarchy) acceleration.
+		 * Delegates the activation to the RayTracer.
 		 * @return the Builder object itself
 		 */
 		public Builder enableBVH() {
-			geometries.api.Intersectable.setCbrActive(true);
-			geometries.impl.Geometries.setBvhActive(true);
+			if (this.camera._rayTracer != null) {
+				this.camera._rayTracer.setCbrActive(true);
+				this.camera._rayTracer.setBvhActive(true);
+			}
 			return this;
 		}
 	}

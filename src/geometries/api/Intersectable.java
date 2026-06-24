@@ -67,7 +67,7 @@ public abstract class Intersectable {
     }
     
     /** Bounding Box associated with this intersectable shape */
-    public BoundingBox box;
+    public BoundingBox box=null;
     
     /** Flag to activate or deactivate the CBR mechanism globally */
     protected static boolean cbrActive = false;
@@ -76,8 +76,17 @@ public abstract class Intersectable {
         cbrActive = active;
     }
 
-    protected abstract void buildBox();
+    /**
+     * Calculates the bounding box for the shape.
+     */
+    public abstract void buildBox();
 
+    /**
+     * Calculates all intersection objects with this shape (NVI Pattern).
+     * Includes CBR early rejection logic.
+     * * @param ray the ray
+     * @return list of intersections
+     */
     public final List<Intersection> calcIntersections(Ray ray) {
         
         if (cbrActive && box != null && !box.isIntersected(ray)) {
@@ -96,14 +105,7 @@ public abstract class Intersectable {
         return intersections == null ? null : intersections.stream().map(i -> i.point).toList();
     }
 
-    /**
-     * Calculates all intersection objects with this shape (NVI Pattern).
-     * @param ray the ray
-     * @return list of intersections
-     */
-//    public final List<Intersection> calcIntersections(Ray ray) {
-//        return calcIntersectionsHelper(ray);
-//    }
+
 
     /**
      * Helper method for calculating intersections.

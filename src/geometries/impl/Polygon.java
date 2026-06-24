@@ -122,7 +122,7 @@ public class Polygon extends Geometry {
 	}
 	
 	@Override
-	protected void buildBox() {
+	public void buildBox() {
 		if (_vertices == null || _vertices.isEmpty()) return;
 		
 		// Initialize the bounding box with the first vertex

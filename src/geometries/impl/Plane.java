@@ -74,7 +74,7 @@ public final class Plane extends Geometry {
 	}
 	
 	@Override
-	protected void buildBox() {
+	public void buildBox() {
 		// Infinite shapes cannot be bounded by a box
 		box = null;
 	}

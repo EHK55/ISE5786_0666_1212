@@ -52,7 +52,7 @@ public class Tube extends RadialGeometry {
 	}
 	
 	@Override
-	protected void buildBox() {
+	public void buildBox() {
 		// Infinite shapes cannot be bounded by a box
 		box = null;
 	}
