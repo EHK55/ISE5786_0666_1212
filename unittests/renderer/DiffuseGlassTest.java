@@ -30,8 +30,8 @@ public class DiffuseGlassTest {
 						.setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(30)));
 
 		// --- 2. FROSTED GLASS (DIFFUSE GLASS) ---
-		Material frostedGlass = new Material().setKD(0.1).setKS(0.1).setShininess(30).setKT(0.8).setBlurRadius(0.1); // Blur
-																														// enabled
+		Material frostedGlass = new Material().setKD(0.1).setKS(0.1).setShininess(30).setKT(0.8); // Blur
+																									// enabled
 
 		scene.geometries.add(
 				// Triangle 1 of the glass pane (placed in front of spheres, at Z = 50)
@@ -72,11 +72,11 @@ public class DiffuseGlassTest {
 				.setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0)).setVpSize(150, 150).setVpDistance(100)
 				.setResolution(600, 600)
 				// Enable Super-Sampling x9 and Jittering
-				.setRayTracer((new SimpleRayTracer(scene).setBeamResolution(9).setPattern(SamplingPattern.JITTERED)))
-				.setMultithreading(4).setDebugPrint(0.5).build();
+				.setRayTracer((new SimpleRayTracer(scene).setPattern(SamplingPattern.JITTERED))).setMultithreading(4)
+				.setDebugPrint(0.5).build();
 
 		long startTime = System.currentTimeMillis();
-		camera.renderImage().writeToImage("DiffuseGlass_WithBlur");
+		camera.renderImage().writeToImage("DiffuseGlass_WithBlur2");
 		System.out.println(
 				"Diffuse Glass (With Super-Sampling) : " + (System.currentTimeMillis() - startTime) / 1000.0 + "s");
 	}

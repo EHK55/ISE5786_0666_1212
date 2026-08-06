@@ -55,8 +55,10 @@ public class Polygon extends Geometry {
 		// Create the supporting plane using the first three vertices.
 		// The plane stores the constant normal of the polygon.
 		_plane = new Plane(vertices[0], vertices[1], vertices[2]);
-		if (_size == 3)
+		if (_size == 3) {
+			buildBox();
 			return; // no need for more tests for a Triangle
+		}
 
 		Vector n = _plane.getNormal(vertices[0]);
 		// Subtracting identical vertices would create a zero vector (illegal)
@@ -77,6 +79,7 @@ public class Polygon extends Geometry {
 			if (positive != (edge1.crossProduct(edge2).dotProduct(n) > 0))
 				throw new IllegalArgumentException("All vertices must be ordered and the polygon must be convex");
 		}
+		buildBox();
 	}
 
 	@Override
@@ -120,14 +123,15 @@ public class Polygon extends Geometry {
 
 		return List.of(new Intersection(this, planeIntersections.get(0)));
 	}
-	
+
 	@Override
 	public void buildBox() {
-		if (_vertices == null || _vertices.isEmpty()) return;
-		
+		if (_vertices == null || _vertices.isEmpty())
+			return;
+
 		// Initialize the bounding box with the first vertex
 		box = new primitives.BoundingBox(_vertices.get(0));
-		
+
 		// Expand the box to include all other vertices
 		for (int i = 1; i < _vertices.size(); i++) {
 			box = box.expand(_vertices.get(i));

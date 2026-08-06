@@ -23,7 +23,8 @@ public final class Sphere extends RadialGeometry {
 	public Sphere(Point center, double radius) {
 		super(radius);
 		this._center = center;
-		
+		buildBox();
+
 	}
 
 	@Override
@@ -69,7 +70,7 @@ public final class Sphere extends RadialGeometry {
 		return null;
 
 	}
-	
+
 	@Override
 	public void buildBox() {
 		// The bounding box is created legally using the new constructor in primitives

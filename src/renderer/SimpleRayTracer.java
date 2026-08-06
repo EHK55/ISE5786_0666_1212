@@ -219,16 +219,26 @@ public class SimpleRayTracer extends RayTracerBase {
 		Color color = Color.BLACK;
 		Material material = intersection.material;
 
+		// LE BOUCLIER ANTI-EXPLOSION EST ICI :
+		// Si on est au premier rebond (MAX_CALC_COLOR_LEVEL), on fait le faisceau
+		// complet.
+		// Sinon, on ne tire qu'UN SEUL rayon (résolution = 1) pour les rebonds
+		// suivants.
+		int currentRes = (level == MAX_CALC_COLOR_LEVEL) ? this.beamResolution : 1;
+
 		Ray reflectionRay = constructReflectionRay(intersection);
 		if (reflectionRay != null) {
-			List<Ray> reflectionBeam = constructRayBeam(reflectionRay, material.blurRadius, intersection.normal);
+			// On passe currentRes à la fonction
+			List<Ray> reflectionBeam = constructRayBeam(reflectionRay, material.blurRadius, intersection.normal,
+					currentRes);
 			color = color.add(calcAverageGlobalEffect(reflectionBeam, level, k, material.kR));
 		}
 
 		Ray transparencyRay = constructTransparencyRay(intersection);
 		if (transparencyRay != null) {
-
-			List<Ray> transparencyBeam = constructRayBeam(transparencyRay, material.blurRadius, intersection.normal);
+			// On passe currentRes à la fonction
+			List<Ray> transparencyBeam = constructRayBeam(transparencyRay, material.blurRadius, intersection.normal,
+					currentRes);
 			color = color.add(calcAverageGlobalEffect(transparencyBeam, level, k, material.kT));
 		}
 
@@ -303,12 +313,21 @@ public class SimpleRayTracer extends RayTracerBase {
 	 * @param n          The normal vector of the intersected geometry
 	 * @return A list of scattered rays
 	 */
-	private List<Ray> constructRayBeam(Ray centerRay, double blurRadius, Vector n) {
+	private List<Ray> constructRayBeam(Ray centerRay, double blurRadius, Vector n, int currentResolution) {
 		List<Ray> beam = new ArrayList<>();
 
-		// Generate 2D points using the dynamic beam resolution and jitter flag
-		List<Point2D> points2D = Blackboard.generateJitteredPoints(blurRadius, this.beamResolution, TargetShape.CIRCLE,
+		// 1. LE BOUCLIER MAGIQUE : Si pas de flou ou 1 seul rayon, on ne perd pas de
+		// temps !
+		// Cela évite le crash du zéro et accélère le rendu x100 sur les objets lisses.
+		if (primitives.Util.isZero(blurRadius) || currentResolution <= 1) {
+			beam.add(centerRay);
+			return beam;
+		}
+
+		// Utilise currentResolution au lieu de this.beamResolution !
+		List<Point2D> points2D = Blackboard.generateJitteredPoints(blurRadius, currentResolution, TargetShape.CIRCLE,
 				this.samplingPattern);
+
 		if (points2D.size() == 1) {
 			beam.add(centerRay);
 			return beam;
@@ -330,10 +349,12 @@ public class SimpleRayTracer extends RayTracerBase {
 		for (Point2D p2d : points2D) {
 			Point targetPoint = pc;
 
-			if (p2d.x != 0) {
+			// 2. UTILISER isZero() AU LIEU DE != 0 POUR ÉVITER LES BUGS MATHÉMATIQUES
+			// (Vector Zero)
+			if (!primitives.Util.isZero(p2d.x)) {
 				targetPoint = targetPoint.add(vX.scale(p2d.x));
 			}
-			if (p2d.y != 0) {
+			if (!primitives.Util.isZero(p2d.y)) {
 				targetPoint = targetPoint.add(vY.scale(p2d.y));
 			}
 
@@ -342,6 +363,8 @@ public class SimpleRayTracer extends RayTracerBase {
 			double nv = n.dotProduct(v);
 			double nNewDir = n.dotProduct(newDir);
 
+			// Ajoute le rayon seulement s'il pointe dans la bonne direction par rapport à
+			// la normale
 			if (nv * nNewDir > 0) {
 				beam.add(new Ray(p0, newDir, n));
 			}

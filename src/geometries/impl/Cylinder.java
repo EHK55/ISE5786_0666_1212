@@ -22,6 +22,7 @@ public final class Cylinder extends Tube {
 	public Cylinder(double radius, Ray axis, double height) {
 		super(radius, axis);
 		this._height = height;
+		buildBox();
 	}
 
 	@Override
@@ -46,5 +47,24 @@ public final class Cylinder extends Tube {
 		// Otherwise, it's on the lateral surface (same logic as Tube)
 		Point o = p0.add(v.scale(t));
 		return point.subtract(o).normalize();
+	}
+
+	@Override
+	public void buildBox() {
+		// 1. Trouver le centre du bas (p0)
+		Point p0 = _axis.origin();
+
+		// 2. Trouver le centre du haut (p1) = p0 + (direction * hauteur)
+		Vector v = _axis.direction();
+		Point p1 = p0.add(v.scale(_height));
+
+		// 3. Créer deux "fausses" boîtes de sphères pour les deux extrémités
+		primitives.BoundingBox b1 = new primitives.BoundingBox(p0, _radius);
+		primitives.BoundingBox b2 = new primitives.BoundingBox(p1, _radius);
+
+		// 4. Fusionner les deux boîtes en prenant les extrêmes
+		box = new primitives.BoundingBox(Math.min(b1.minX, b2.minX), Math.max(b1.maxX, b2.maxX),
+				Math.min(b1.minY, b2.minY), Math.max(b1.maxY, b2.maxY), Math.min(b1.minZ, b2.minZ),
+				Math.max(b1.maxZ, b2.maxZ));
 	}
 }
